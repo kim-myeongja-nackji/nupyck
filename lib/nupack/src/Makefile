@@ -23,10 +23,10 @@ ifndef CXX
   CXX=icpc
 endif
 ifndef NUPACK_CFLAGS
-  NUPACK_CFLAGS = -fPIC -g -std=c99 -Wall -Wmissing-prototypes -Wmissing-declarations
+  NUPACK_CFLAGS = -fPIC -O3 -std=c99 -Wall -Wmissing-prototypes -Wmissing-declarations
 endif
 ifndef NUPACK_CXXFLAGS
-  NUPACK_CXXFLAGS = -fPIC -g -Wall -Wmissing-prototypes -Wmissing-declarations
+  NUPACK_CXXFLAGS = -fPIC -O3 -Wall -Wmissing-prototypes -Wmissing-declarations
 endif
 
 export NUPACK_SAMPLE

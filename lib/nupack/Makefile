@@ -8,7 +8,7 @@
 
 all: 	
 	$(MAKE) -C src/
-	gcc -fPIC -shared -g -o nupack.so \
+	gcc -fPIC -shared -O3 -o nupack.so \
   src/shared/*.o src/shared/rng/*.o src/thermo/utils/*.o
 
 clean: 
