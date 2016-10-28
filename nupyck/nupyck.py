@@ -40,7 +40,7 @@ class dnaStructures(Structure):
   ])
 
 
-def pfunc(seq_as_ints, temp):
+def pfunc(seq_as_ints, temp, freeEnergy = False):
   pf = nupack.pfuncFull(
     c_array(seq_as_ints), # inputSeq
     c_int(3),            # complexity
@@ -52,7 +52,7 @@ def pfunc(seq_as_ints, temp):
     c_longdouble(0.0),   # magnesiumconc
     c_int(0)             # uselongsalt
   )
-  return pf 
+  return pf if not freeEnergy else -kB * (273.15+temp) * math.log(pf)
 
 def ppairs(seq_as_ints, temp):
   pairPr = POINTER(c_longdouble).in_dll(nupack, "pairPr")
