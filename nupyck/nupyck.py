@@ -40,7 +40,7 @@ class dnaStructures(Structure):
   ])
 
 
-def pfunc(seq_as_ints, temp, freeEnergy = False):
+def pfunc(seq_as_ints, temp, na=1.0, mg=0.0, freeEnergy = False):
   pf = nupack.pfuncFull(
     c_array(seq_as_ints), # inputSeq
     c_int(3),            # complexity
@@ -48,8 +48,8 @@ def pfunc(seq_as_ints, temp, freeEnergy = False):
     c_int(1),            # dangles
     c_longdouble(temp),  # temperature
     c_int(0),            # calcPairs
-    c_longdouble(1.0),   # sodiumconc
-    c_longdouble(0.0),   # magnesiumconc
+    c_longdouble(na),   # sodiumconc
+    c_longdouble(mg),   # magnesiumconc
     c_int(0)             # uselongsalt
   )
   return pf if not freeEnergy else -kB * (273.15+temp) * math.log(pf)
@@ -74,7 +74,7 @@ def ppairs(seq_as_ints, temp):
   return np.array(pairPr[:seqlen**2]).reshape(seqlen,seqlen)
 
 
-def ppair_single(seq_as_ints, temp, idx1, idx2):
+def ppair_single(seq_as_ints, temp, idx1, idx2, na = 1.0, mg = 0.0):
   pairPr = POINTER(c_longdouble).in_dll(nupack, "pairPr")
 
   seqlen = len(seq_as_ints) - 1
@@ -87,14 +87,14 @@ def ppair_single(seq_as_ints, temp, idx1, idx2):
     c_int(1),            # dangles
     c_longdouble(temp),  # temperature
     c_int(1),            # calcPairs
-    c_longdouble(1.0),   # sodiumconc
-    c_longdouble(0.0),   # magnesiumconc
+    c_longdouble(na),    # sodiumconc
+    c_longdouble(mg),    # magnesiumconc
     c_int(0)             # uselongsalt
   )
   return pairPr[idx1 * seqlen + idx2]
 
 
-def mfe(seq_as_ints, temp):
+def mfe(seq_as_ints, temp, na = 1.0, mg = 0.0):
 
   mfeStructs = dnaStructures(
     POINTER(oneDnaStruct)(), 
@@ -114,8 +114,8 @@ def mfe(seq_as_ints, temp):
     c_longdouble(temp),
     c_int(1),
     c_int(1),
-    c_longdouble(1.0),
-    c_longdouble(0.0),
+    c_longdouble(na),
+    c_longdouble(mg),
     c_int(0)
   )
 
