@@ -9,7 +9,8 @@
 all: 	
 	$(MAKE) -C src/
 	gcc -fPIC -shared -O3 -o nupack.so \
-  src/shared/*.o src/shared/rng/*.o src/thermo/utils/*.o
+	src/shared/*.o src/shared/rng/*.o src/thermo/utils/*.o \
+	src/thermo/concentrations/CalcConc.o
 
 clean: 
 	$(MAKE) -C lib/ clean
