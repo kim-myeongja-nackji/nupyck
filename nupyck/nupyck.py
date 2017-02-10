@@ -86,7 +86,7 @@ def tp_concs(template, primer, t_conc, p_conc, temp):
   maxNoStep    = c_int(50)
   maxTrial     = c_int(100000)
   perturbScale = c_double(100)
-  quiet        = c_int(0)
+  quiet        = c_int(1)
   writeLogFile = c_int(0)
   logFile      = c_char_p(None)
   h20Density   = c_double(waterDensity)
