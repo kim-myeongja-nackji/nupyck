@@ -98,7 +98,7 @@ def tp_concs(template, primer, t_conc, p_conc, temp):
     logFile, h20Density, seed
   )
 
-  return np.array(x)
+  return np.array(x) * waterDensity
 
 def ppairs(seq_as_ints, temp):
   pairPr = POINTER(c_longdouble).in_dll(nupack, "pairPr")
