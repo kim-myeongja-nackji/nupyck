@@ -56,7 +56,18 @@ def pfunc(seq_as_ints, temp, na=1.0, mg=0.0, freeEnergy = False):
   )
   return pf if not freeEnergy else -kB * (273.15+temp) * math.log(pf)
 
-def tp_concs(template, primer, t_conc, p_conc, temp):
+pairs = dict(zip("GATC", "CTAG"))
+def pairof(b): return pairs[b]
+
+def tp_end_pairfrac(template, primer, t_conc, p_conc, temp):
+  lp = len(primer)
+
+  if template[-lp] != pairof(primer[-1]):
+    return 0.0
+
+  lt = len(template)
+  ppair_idx1 = lt - lp
+  ppair_idx2 = lt + lp - 1
 
   t  = seqToInts(template)
   p  = seqToInts(primer)
@@ -64,7 +75,18 @@ def tp_concs(template, primer, t_conc, p_conc, temp):
   tp = seqToInts("+".join((template, primer)))
   pp = seqToInts("+".join((primer, primer)))
 
-  get_energy = lambda s: -math.log(pfunc(s, temp))
+  ppair, tp_pf = ppair_single(tp, temp, ppair_idx1, ppair_idx2, get_pf = True)
+  tp_energy = -math.log(max(tp_pf, 1))
+
+  get_energy = lambda s: -math.log(max(pfunc(s, temp), 1))
+  G = ([
+    get_energy(t),
+    get_energy(p),
+    get_energy(tt),
+    tp_energy,
+    get_energy(pp)
+  ])
+
   waterDensity = nupack.WaterDensity(c_double(temp))
 
   # result array
@@ -74,7 +96,7 @@ def tp_concs(template, primer, t_conc, p_conc, temp):
     c_array([1, 0, 2, 1, 0]),
     c_array([0, 1, 0, 1, 2])
   )
-  G            = c_double_array(map(get_energy, [t, p, tt, tp, pp]))
+  G            = c_double_array(G)
   x0           = c_double_array([ t_conc/waterDensity, p_conc/waterDensity ])
   numSS        = c_int(2)
   numTotal     = c_int(5)
@@ -98,7 +120,18 @@ def tp_concs(template, primer, t_conc, p_conc, temp):
     logFile, h20Density, seed
   )
 
-  return np.array(x) * waterDensity
+  if not converged:
+    raise RuntimeError("concentration calculation did not converge")
+
+  # convert back to molarity
+  x = np.array(x) * waterDensity
+
+  # final [template-primer duplex] vs initial [template]
+  conc_ratio = x[3] / t_conc
+
+  pfrac = ppair * conc_ratio
+
+  return pfrac
 
 def ppairs(seq_as_ints, temp):
   pairPr = POINTER(c_longdouble).in_dll(nupack, "pairPr")
@@ -120,7 +153,7 @@ def ppairs(seq_as_ints, temp):
   return np.array(pairPr[:seqlen**2]).reshape(seqlen,seqlen)
 
 
-def ppair_single(seq_as_ints, temp, idx1, idx2, na = 1.0, mg = 0.0):
+def ppair_single(seq_as_ints, temp, idx1, idx2, na = 1.0, mg = 0.0, get_pf = False):
   pairPr = POINTER(c_longdouble).in_dll(nupack, "pairPr")
 
   seqlen = len(seq_as_ints) - 1
@@ -137,7 +170,13 @@ def ppair_single(seq_as_ints, temp, idx1, idx2, na = 1.0, mg = 0.0):
     c_longdouble(mg),    # magnesiumconc
     c_int(0)             # uselongsalt
   )
-  return pairPr[idx1 * seqlen + idx2]
+
+  ppair = pairPr[idx1 * seqlen + idx2]
+
+  if get_pf:
+    return ppair, pf
+  else:
+    return ppair
 
 
 def mfe(seq_as_ints, temp, na = 1.0, mg = 0.0):
