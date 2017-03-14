@@ -59,7 +59,7 @@ def pfunc(seq_as_ints, temp, na=1.0, mg=0.0, freeEnergy = False):
 pairs = dict(zip("GATC", "CTAG"))
 def pairof(b): return pairs[b]
 
-def tp_end_pairfrac(template, primer, t_conc, p_conc, temp):
+def tp_end_pairfrac(template, primer, t_conc, p_conc, temp, na=1.0, mg=0.0):
   lp = len(primer)
 
   if template[-lp] != pairof(primer[-1]):
@@ -75,10 +75,15 @@ def tp_end_pairfrac(template, primer, t_conc, p_conc, temp):
   tp = seqToInts("+".join((template, primer)))
   pp = seqToInts("+".join((primer, primer)))
 
-  ppair, tp_pf = ppair_single(tp, temp, ppair_idx1, ppair_idx2, get_pf = True)
+  ppair, tp_pf = ppair_single(
+    tp, temp,
+    ppair_idx1, ppair_idx2,
+    na = na, mg = mg,
+    get_pf = True
+  )
   tp_energy = -math.log(max(tp_pf, 1))
 
-  get_energy = lambda s: -math.log(max(pfunc(s, temp), 1))
+  get_energy = lambda s: -math.log(max(pfunc(s, temp, na = na, mg = mg), 1))
   G = ([
     get_energy(t),
     get_energy(p),
