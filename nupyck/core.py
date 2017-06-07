@@ -15,6 +15,13 @@ nupack.WaterDensity.restype = c_double
 # boltzmann constant
 kB = 0.0019872041
 
+NO_DANGLES = 0
+SOME_DANGLES = 1
+ALL_DANGLES = 2
+
+DNA = 0
+RNA = 1
+
 c_array = lambda l: (c_int * len(l))(*l)
 c_double_array = lambda l: (c_double * len(l))(*l)
 
@@ -42,19 +49,6 @@ class dnaStructures(Structure):
   ])
 
 
-def pfunc(seq_as_ints, temp, na=1.0, mg=0.0, freeEnergy = False):
-  pf = nupack.pfuncFull(
-    c_array(seq_as_ints), # inputSeq
-    c_int(3),            # complexity
-    c_int(0),            # naType
-    c_int(1),            # dangles
-    c_longdouble(temp),  # temperature
-    c_int(0),            # calcPairs
-    c_longdouble(na),   # sodiumconc
-    c_longdouble(mg),   # magnesiumconc
-    c_int(0)             # uselongsalt
-  )
-  return pf if not freeEnergy else -kB * (273.15+temp) * math.log(pf)
 
 pairs = dict(zip("GATC", "CTAG"))
 def pairof(b): return pairs[b]
