@@ -132,51 +132,6 @@ def tp_end_pairfrac(template, primer, t_conc, p_conc, temp, na=1.0, mg=0.0):
 
   return pfrac
 
-def ppairs(seq_as_ints, temp):
-  pairPr = POINTER(c_longdouble).in_dll(nupack, "pairPr")
-
-  seqlen = len(seq_as_ints) - 1
-  pairPr.contents = (c_longdouble * seqlen**2)()
-
-  pf = nupack.pfuncFull(
-    c_array(seq_as_ints), # inputSeq
-    c_int(3),            # complexity
-    c_int(0),            # naType
-    c_int(1),            # dangles
-    c_longdouble(temp),  # temperature
-    c_int(1),            # calcPairs
-    c_longdouble(1.0),   # sodiumconc
-    c_longdouble(0.0),   # magnesiumconc
-    c_int(0)             # uselongsalt
-  )
-  return np.array(pairPr[:seqlen**2]).reshape(seqlen,seqlen)
-
-
-def ppair_single(seq_as_ints, temp, idx1, idx2, na = 1.0, mg = 0.0, get_pf = False):
-  pairPr = POINTER(c_longdouble).in_dll(nupack, "pairPr")
-
-  seqlen = len(seq_as_ints) - 1
-  pairPr.contents = (c_longdouble * seqlen**2)()
-
-  pf = nupack.pfuncFull(
-    c_array(seq_as_ints), # inputSeq
-    c_int(3),            # complexity
-    c_int(0),            # naType
-    c_int(1),            # dangles
-    c_longdouble(temp),  # temperature
-    c_int(1),            # calcPairs
-    c_longdouble(na),    # sodiumconc
-    c_longdouble(mg),    # magnesiumconc
-    c_int(0)             # uselongsalt
-  )
-
-  ppair = pairPr[idx1 * seqlen + idx2]
-
-  if get_pf:
-    return ppair, pf
-  else:
-    return ppair
-
 
 def mfe(seq_as_ints, temp, na = 1.0, mg = 0.0):
 
