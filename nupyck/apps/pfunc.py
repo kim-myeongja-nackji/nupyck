@@ -5,7 +5,8 @@ def single(sequence, temp,
         material=core.RNA,
         na=1.0, mg=0.0,
         pseudo=False,
-        dangles=core.SOME_DANGLES):
+        dangles=core.SOME_DANGLES,
+        calc_pairs = False):
 
     if pseudo and material == core.DNA:
         raise ValueError("pseudoknot option valid for RNA only")
@@ -19,7 +20,7 @@ def single(sequence, temp,
       core.c_int(material),      # naType
       core.c_int(dangles),       # dangles
       core.c_longdouble(temp),   # temperature
-      core.c_int(0),             # calcPairs
+      core.c_int(calc_pairs),    # calcPairs
       core.c_longdouble(na),     # sodiumconc
       core.c_longdouble(mg),     # magnesiumconc
       core.c_int(0)              # uselongsalt
