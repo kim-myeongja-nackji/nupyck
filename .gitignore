@@ -1,3 +1,4 @@
 lib/nupack/*
 nupyck.egg-info
 *.pyc
+*.*.swp
