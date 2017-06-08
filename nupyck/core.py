@@ -25,7 +25,7 @@ RNA = 1
 c_array = lambda l: (c_int * len(l))(*l)
 c_double_array = lambda l: (c_double * len(l))(*l)
 
-baseToInt = dict( zip( "ACGT+" , [1,2,3,4,15] ) )
+baseToInt = dict( zip( "ACGTU+" , [1,2,3,4,4,15] ) )
 def seqToInts(seq): return [ baseToInt[b] for b in seq ] + [-1]
 
 intToBase = dict( zip( [1,2,3,4,15] , "ACGT+" ) )
