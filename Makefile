@@ -1,5 +1,8 @@
-all:
+all: lib/nupack/Makefile
 	$(MAKE) -C lib/nupack
+
+lib/nupack/Makefile:
+	git submodule update --init
 
 install:
 	pip install -e .
