@@ -26,7 +26,7 @@ def single(sequence, temp,
       core.c_int(0)              # uselongsalt
     )
 
-    energy = -core.kB * (273.15 + temp) * math.log(pf)
+    energy = -core.kB * (273.15 + temp) * math.log(max(pf,1))
     return {'energy' : energy, 'pfunc' : pf}
 
 def multi(sequences, perm, *args, **kwargs):
