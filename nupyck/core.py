@@ -32,6 +32,9 @@ def seqToInts(seq): return [ baseToInt[b] for b in seq ] + [-1]
 intToBase = dict( zip( [1,2,3,4,15] , "ACGT+" ) )
 def intsToSeq(ints): return "".join([ intToBase[i] for i in ints[:-1] ])
 
+complement = dict( zip("ACGT", "TGCA") )
+revcomp = lambda seq: "".join(reversed([complement[b] for b in seq]))
+
 class oneDnaStruct(Structure):
   _fields_ = ([
     ("theStruct", POINTER(c_int)),
