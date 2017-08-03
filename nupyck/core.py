@@ -9,6 +9,7 @@ os.environ['NUPACKHOME'] = nupack_dir
 
 nupack = cdll.LoadLibrary(os.path.join(nupack_dir, 'nupack.so'))
 nupack.pfuncFull.restype = c_longdouble
+nupack.pfuncFullWithSym.restype = c_longdouble
 nupack.pfunc.restype     = c_longdouble
 nupack.WaterDensity.restype = c_double
 

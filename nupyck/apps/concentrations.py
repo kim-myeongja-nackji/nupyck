@@ -12,8 +12,12 @@ def tp_fraction(template, primer, t_conc, p_conc, temp, na=1.0, mg=0.0):
   tp = "+".join((template, primer))
   pp = "+".join((primer, primer))
 
-  G = [ pfunc.single(seq, temp, material = core.DNA, na = na, mg = mg)['energy']
-        for seq in [ t, p, tt, tp, pp ]
+  kT = (temp + 273.15) * core.kB
+
+  G = [ pfunc.single(
+          seq, temp, material = core.DNA, na = na, mg = mg, symmetry = sym
+        )['energy'] / kT
+        for seq, sym in zip([ t, p, tt, tp, pp ], [ 1, 1, 2, 1, 2 ])
       ]
 
   waterDensity = core.nupack.WaterDensity(core.c_double(temp))
@@ -33,7 +37,7 @@ def tp_fraction(template, primer, t_conc, p_conc, temp, na=1.0, mg=0.0):
   tol          = core.c_double(1e-7)
   deltaBar     = core.c_double(1000)
   eta          = core.c_double(0.125)
-  kT           = core.c_double((temp + 273.15) * core.kB)
+  kT           = core.c_double(kT)
   maxNoStep    = core.c_int(50)
   maxTrial     = core.c_int(100000)
   perturbScale = core.c_double(100)
@@ -57,6 +61,5 @@ def tp_fraction(template, primer, t_conc, p_conc, temp, na=1.0, mg=0.0):
 
   # final [template-primer duplex] vs initial [template]
   conc_ratio = x[3] / t_conc
-
   return conc_ratio
 

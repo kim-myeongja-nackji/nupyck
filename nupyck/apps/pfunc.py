@@ -6,7 +6,8 @@ def single(sequence, temp,
         na=1.0, mg=0.0,
         pseudo=False,
         dangles=core.SOME_DANGLES,
-        calc_pairs = False):
+        calc_pairs = False,
+        symmetry = 1):
 
     if pseudo and material == core.DNA:
         raise ValueError("pseudoknot option valid for RNA only")
@@ -14,13 +15,14 @@ def single(sequence, temp,
     seq_as_ints = core.seqToInts(sequence)
     complexity = 5 if pseudo else 3
 
-    pf = core.nupack.pfuncFull(
+    pf = core.nupack.pfuncFullWithSym(
       core.c_array(seq_as_ints), # inputSeq
       core.c_int(complexity),    # complexity
       core.c_int(material),      # naType
       core.c_int(dangles),       # dangles
       core.c_longdouble(temp),   # temperature
       core.c_int(calc_pairs),    # calcPairs
+      core.c_int(symmetry),      # permSymmetry
       core.c_longdouble(na),     # sodiumconc
       core.c_longdouble(mg),     # magnesiumconc
       core.c_int(0)              # uselongsalt
@@ -29,6 +31,7 @@ def single(sequence, temp,
     energy = -core.kB * (273.15 + temp) * math.log(max(pf,1))
     return {'energy' : energy, 'pfunc' : pf}
 
+#TODO: fix symmetry
 def multi(sequences, perm, *args, **kwargs):
 
     if kwargs.get('pseudo', False):
