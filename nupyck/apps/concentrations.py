@@ -4,10 +4,10 @@ import numpy as np
 
 def melting_temp(template, primer, t_conc, p_conc, na=1.0, mg=0.0):
     maxfrac = 0
-    for temp in range(0, 100, 5):
+    for temp in range(0, 100):
         frac = tp_fraction(template, primer, t_conc, p_conc, temp, na, mg)
         if maxfrac > 0.5 and frac < 0.5:
-            return temp - 2.5
+            return temp - 1
         elif frac > maxfrac:
             maxfrac = frac
     return 0
