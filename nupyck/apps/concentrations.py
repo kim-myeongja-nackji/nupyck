@@ -2,16 +2,13 @@ from .. import core
 import pfunc
 import numpy as np
 
-def melting_temp(template, primer, t_conc, p_conc, na=1.0, mg=0.0):
+def melting_temp(template, primer, t_conc, p_conc, trange, na=1.0, mg=0.0):
     maxfrac = 0
-    for temp in range(0, 100):
+    for tidx,temp in enumerate(trange):
         frac = tp_fraction(template, primer, t_conc, p_conc, temp, na, mg)
-        if maxfrac > 0.5 and frac < 0.5:
-            return temp - 1
-        elif frac > maxfrac:
-            maxfrac = frac
-    return 0
-
+        if frac < 0.5:
+            return trange[max(tidx-1, 0)]
+    return trange[-1]
 
 def tp_fraction(template, primer, t_conc, p_conc, temp, na=1.0, mg=0.0):
   """Return the fraction of template converted to template/primer duplex"""
