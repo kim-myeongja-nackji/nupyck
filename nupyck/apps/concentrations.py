@@ -2,13 +2,38 @@ from .. import core
 import pfunc
 import numpy as np
 
-def melting_temp(template, primer, t_conc, p_conc, trange, na=1.0, mg=0.0):
-    maxfrac = 0
-    for tidx,temp in enumerate(trange):
-        frac = tp_fraction(template, primer, t_conc, p_conc, temp, na, mg)
-        if frac < 0.5:
-            return trange[max(tidx-1, 0)]
-    return trange[-1]
+def melting_temp(template, primer, t_conc, p_conc, t_lo, t_hi, na=1.0, mg=0.0,
+        eps = 0.02):
+    def get_frac(temp):
+        return tp_fraction(template, primer, t_conc, p_conc, temp, na, mg)
+
+    # base case: not gonna get better
+    frac = get_frac(t_lo)
+    if frac <= 0.5:
+        return t_lo
+
+    # base case: not gonna get worse
+    frac = get_frac(t_hi)
+    if frac >= 0.5:
+        return t_hi
+
+    converged = False
+    while not converged:
+        temp = t_lo + (t_hi - t_lo) / 2.
+        frac = get_frac(temp)
+
+        # search lower
+        if frac < 0.5 - eps:
+            t_hi = temp
+
+        # search higher
+        elif frac > 0.5 + eps:
+            t_lo = temp
+
+        else:
+            converged = True
+
+    return temp
 
 def tp_fraction(template, primer, t_conc, p_conc, temp, na=1.0, mg=0.0):
   """Return the fraction of template converted to template/primer duplex"""
