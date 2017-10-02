@@ -30,6 +30,9 @@ def pfunc(sequence, temp=37,
     if pseudo and '+' in sequence:
         raise ValueError("pseudoknot option valid only for single strands")
 
+    if material == core.RNA and (na != 1.0 or mg != 0.0):
+        raise ValueError("salt corrections unavailable for RNA")
+
     seq_as_ints = core.seqToInts(sequence)
     complexity = 5 if pseudo else 3
 
