@@ -13,6 +13,8 @@ nupack.pfuncFullWithSym.restype = c_longdouble
 nupack.pfunc.restype     = c_longdouble
 nupack.WaterDensity.restype = c_double
 
+pair_pr = POINTER(c_longdouble).in_dll(nupack, "pairPr")
+
 # boltzmann constant
 kB = 0.0019872041
 
