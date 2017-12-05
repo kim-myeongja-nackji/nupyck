@@ -11,12 +11,13 @@ def pfunc(sequence, temp=37,
         pseudo=False,
         dangles=core.SOME_DANGLES,
         calc_pairs = False,
-        perm = None):
+        perm = None,
+        symmetry = None):
 
-    if perm is None:
+    if perm is None and symmetry is None:
         symmetry = 1
 
-    else:
+    elif perm is not None:
         if type(sequence) is not list:
             raise ValueError("permutation given without list of sequences")
 
