@@ -1,6 +1,7 @@
 from .. import core
 import pfunc
 import numpy as np
+import itertools
 
 def melting_temp(template, primer, t_conc, p_conc, t_lo, t_hi, na=1.0, mg=0.0,
         eps = 0.02):
@@ -35,6 +36,17 @@ def melting_temp(template, primer, t_conc, p_conc, t_lo, t_hi, na=1.0, mg=0.0,
 
     return temp
 
+def _convert_perms_to_A(perms):
+    numTotal = len(perms)
+    numSS = max(map(max, perms))
+
+    A = np.zeros((numSS, numTotal), dtype=int)
+
+    for p, perm in enumerate(perms):
+        for ss in perm:
+            A[ss-1][p] += 1
+
+    return A
 
 def tp_fraction(template, primer, t_conc, p_conc, temp, na=1.0, mg=0.0):
     """Return the fraction of template converted to template/primer duplex"""
@@ -58,6 +70,36 @@ def tp_fraction(template, primer, t_conc, p_conc, temp, na=1.0, mg=0.0):
     frac = tp_conc / t_conc
 
     return frac
+
+def concentrations(species, x0, max_complex_size, temp=37, names=None, **pfunc_kwargs):
+
+    perms = itertools.chain(
+        *[itertools.combinations_with_replacement(range(1,len(species)+1), n)
+            for n in range(1, max_complex_size+1)
+            ]
+        )
+    perms = list(perms)
+
+    G = np.array(
+            [ pfunc.pfunc(species, perm=p, temp=temp, **pfunc_kwargs)['energy']
+                for p in perms
+                ]
+            )
+
+    A = _convert_perms_to_A(perms)
+
+    x = calc_conc(np.array(x0), G, A, temp)
+
+    if names is None:
+        names = perms
+    else:
+        names = ["-".join([names[p-1] for p in perm]) for perm in perms]
+
+    return {
+        "concentrations": dict(zip(names, x)),
+        "energies": dict(zip(names, G))
+    }
+    return dict(zip(names, x))
 
 
 def calc_conc(x0, G, A, temp):
