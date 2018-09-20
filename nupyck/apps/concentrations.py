@@ -139,5 +139,5 @@ def calc_conc(x0, G, A, temp):
     if not converged:
       raise RuntimeError("concentration calculation did not converge")
 
-    x = np.array(x) * waterDensity
+    x = np.array(x[:]) * waterDensity
     return x
