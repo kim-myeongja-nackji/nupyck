@@ -37,6 +37,49 @@ def intsToSeq(ints): return "".join([ intToBase[i] for i in ints[:-1] ])
 complement = dict( zip("ACGT", "TGCA") )
 revcomp = lambda seq: "".join(reversed([complement[b] for b in seq]))
 
+
+calcVPi = nupack.calculateVPi
+calcVPi.restype = c_int
+
+
+class Options:
+    def __init__(
+            self,
+            material=RNA,
+            na=1.0, mg=0.0,
+            pseudo=False,
+            dangles=SOME_DANGLES):
+
+        self.material = material
+        self.na = na
+        self.mg = mg
+        self.pseudo = pseudo
+        self.dangles = dangles
+
+        if pseudo and material == DNA:
+            raise ValueError("pseudoknot option valid for RNA only")
+
+        if material == RNA and (na != 1.0 or mg != 0.0):
+            raise ValueError("salt corrections unavailable for RNA")
+
+    def joinSequences(self, sequences, permutation):
+        if len(permutation) > 1 and self.pseudo:
+            raise ValueError("pseudoknot option valid only for single strands")
+
+        sequence = "+".join(
+            sequences[p-1] for p in permutation
+        )
+
+        symmetry = calcVPi(
+            c_array(permutation),
+            c_int(len(permutation))
+        )
+
+        return sequence, symmetry
+
+
+
+
 class oneDnaStruct(Structure):
   _fields_ = ([
     ("theStruct", POINTER(c_int)),

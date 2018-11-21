@@ -71,7 +71,13 @@ def tp_fraction(template, primer, t_conc, p_conc, temp, na=1.0, mg=0.0):
 
     return frac
 
-def concentrations(species, x0, max_complex_size, temp=37, names=None, **pfunc_kwargs):
+def concentrations(
+        species,
+        x0,
+        max_complex_size,
+        temp=37,
+        names=None,
+        options=core.Options()):
 
     perms = itertools.chain(
         *[itertools.combinations_with_replacement(range(1,len(species)+1), n)
@@ -81,7 +87,7 @@ def concentrations(species, x0, max_complex_size, temp=37, names=None, **pfunc_k
     perms = list(perms)
 
     G = np.array(
-            [ pfunc.pfunc(species, perm=p, temp=temp, **pfunc_kwargs)['energy']
+            [ pfunc.pfunc(species, permutation=p, temp=temp, options=options)['energy']
                 for p in perms
                 ]
             )
