@@ -3,39 +3,6 @@ import pfunc
 import numpy as np
 import itertools
 
-def melting_temp(template, primer, t_conc, p_conc, t_lo, t_hi, na=1.0, mg=0.0,
-        eps = 0.02):
-    def get_frac(temp):
-        return tp_fraction(template, primer, t_conc, p_conc, temp, na, mg)
-
-    # base case: not gonna get better
-    frac = get_frac(t_lo)
-    if frac <= 0.5:
-        return t_lo
-
-    # base case: not gonna get worse
-    frac = get_frac(t_hi)
-    if frac >= 0.5:
-        return t_hi
-
-    converged = False
-    while not converged:
-        temp = t_lo + (t_hi - t_lo) / 2.
-        frac = get_frac(temp)
-
-        # search lower
-        if frac < 0.5 - eps:
-            t_hi = temp
-
-        # search higher
-        elif frac > 0.5 + eps:
-            t_lo = temp
-
-        else:
-            converged = True
-
-    return temp
-
 def _convert_perms_to_A(perms):
     numTotal = len(perms)
     numSS = max(map(max, perms))
@@ -47,29 +14,6 @@ def _convert_perms_to_A(perms):
             A[ss-1][p] += 1
 
     return A
-
-def tp_fraction(template, primer, t_conc, p_conc, temp, na=1.0, mg=0.0):
-    """Return the fraction of template converted to template/primer duplex"""
-
-    x0 = np.array([t_conc, p_conc])
-
-    G = np.array(
-            [ pfunc.pfunc(
-                [ template, primer ],
-                temp = temp, na = na, mg = mg,
-                material = core.DNA,
-                perm = p
-              )['energy'] for p in [1], [2], [1,1], [1,2], [2,2]
-            ]
-          )
-
-    A  = np.array([[1, 0, 2, 1, 0], [0, 1, 0, 1, 2]])
-
-    x = calc_conc(x0, G, A, temp)
-    tp_conc = x[3]
-    frac = tp_conc / t_conc
-
-    return frac
 
 def concentrations(
         species,
