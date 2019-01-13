@@ -1,17 +1,12 @@
 all: lib/nupack/Makefile
 	$(MAKE) -C lib/nupack
+	cp lib/nupack/nupack.so nupyck/
+	cp -r lib/nupack/parameters nupyck/
 
 lib/nupack/Makefile:
 	git submodule update --init
 
-install:
-	pip install -e .
-
-uninstall:
-	pip uninstall -y nupyck
-
 clean:
 	$(MAKE) -C lib/nupack clean
-	rm -f nupyck/*.pyc
-	rm -rf nupyck.egg-info
-	pip uninstall -y nupyck
+	rm -f nupyck/nupack.so
+	rm -rf nupyck/parameters

@@ -4,10 +4,9 @@ import os, math
 from ctypes import *
 
 package_dir = os.path.dirname(__file__)
-nupack_dir  = os.path.join(package_dir, '../lib/nupack')
-os.environ['NUPACKHOME'] = nupack_dir
+os.environ['NUPACKHOME'] = package_dir
 
-nupack = cdll.LoadLibrary(os.path.join(nupack_dir, 'nupack.so'))
+nupack = cdll.LoadLibrary(os.path.join(package_dir, 'nupack.so'))
 nupack.pfuncFull.restype = c_longdouble
 nupack.pfuncFullWithSym.restype = c_longdouble
 nupack.pfunc.restype     = c_longdouble
