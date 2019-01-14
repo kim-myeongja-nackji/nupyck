@@ -9,7 +9,7 @@ class build(build_py):
 
 setup(
   name = 'nupyck',
-  version = "0.0.1",
+  version = "1.0.0",
   packages=find_packages(),
   package_data = {'nupyck':['nupack.so', 'parameters/*']},
   include_package_data = True,
