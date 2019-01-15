@@ -13,6 +13,6 @@ setup(
   packages=find_packages(),
   package_data = {'nupyck':['nupack.so', 'parameters/*']},
   include_package_data = True,
-  install_requires = ["numpy>=1.15.4,<2"],
+  install_requires = ["numpy>=1.15.4,<1.16.0"],
   cmdclass = {"build_py": build}
 )
