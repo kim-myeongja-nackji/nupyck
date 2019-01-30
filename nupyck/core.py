@@ -11,6 +11,7 @@ nupack.pfuncFull.restype = c_longdouble
 nupack.pfuncFullWithSym.restype = c_longdouble
 nupack.pfunc.restype     = c_longdouble
 nupack.WaterDensity.restype = c_double
+nupack.mfeFullWithSym.restype = c_longdouble
 
 pair_pr = POINTER(c_longdouble).in_dll(nupack, "pairPr")
 
