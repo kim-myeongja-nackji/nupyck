@@ -8,7 +8,18 @@ Instead of calling NUPACK's executables via the shell, `nupyck` includes
 a version of NUPACK compiled as a shared library, which is called directly
 from python using `ctypes`.
 
-### Usage
+Table of Contents:
+1. [Basic Usage](#basic-usage)
+    1. [Options](#options)
+    2. [`pfunc`](#pfunc)
+    3. [`pairs`](#pairs)
+    4. [`concentrations`](#concentrations)
+    5. [`mfe`](#mfe)
+2. [Advanced Usage](#advanced-usage)
+    1. [Parallel Jobs](#parallel-jobs)
+    
+
+### Basic Usage
 `nupyck` currently exposes four "applications" from the NUPACK suite:
 `pfunc`, `pairs`, `concentrations`, and `mfe`. Each of these takes input
 similar to their NUPACK counterparts.
@@ -35,7 +46,7 @@ opts = nupyck.Options()
 opts = nupyck.Options(material = nupyck.DNA)
 ```
 
-#### `pfunc` application
+#### `pfunc`
 The input's to nupyck's `pfunc` application are the same as to NUPACK's:
 a list of sequences, a 1-indexed permutation of those sequences, the
 temperature, and other options. For example, consider the following
@@ -64,3 +75,13 @@ so the above code produces the following output:
 ```python
 {'energy': -121.97280668378544, 'pfunc': 1.02444390480969e+90}
 ```
+
+#### `pairs`
+
+#### `concentrations`
+
+#### `mfe`
+
+### Advanced Usage
+
+#### Parallel Jobs
