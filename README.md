@@ -77,6 +77,27 @@ so the above code produces the following output:
 ```
 
 #### `pairs`
+The inputs to `nupyck.pairs` are the same as to `nupyck.pfunc`. In addition to
+`energy` and `pfunc`, the result dictionary also contains `ppairs`, which
+is a numpy matrix where `ppairs[i,j]` is the probability of the i-th base
+pairing with the j-th base of the ordered complex. `ppairs[i,-1]` is the
+probability that the i-th base is unpaired.
+
+The `ppairs` matrix can be used to produce an image similar to that made
+by the [nupack.org](http://nupack.org) analysis tools. Using the same
+variables as above:
+```python
+import matplotlib.pyplot as plt
+
+result = nupyck.pairs(sequences, permutation, temp = 23, options = options)
+
+plt.matshow(result['ppairs'])
+```
+![ppairs output](docs/ppairs-output.png)
+
+**Note**: `nupyck.pairs` does not currently return the `epairs` output
+of NUPACK, nor does it implement pair calculation with pseudoknots. These
+features may be implemented in a later version of `nupyck`.
 
 #### `concentrations`
 
