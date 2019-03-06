@@ -188,3 +188,37 @@ Produces:
 ### Advanced Usage
 
 #### Parallel Jobs
+
+One reason `nupyck` was created was to execute many calls to `pfunc` in
+parallel, which was complex and inefficient when each call
+required executing NUPACK's `pfunc` binary. However, since `nupyck` bypasses
+the binary frontends to NUPACK by using a shared library, parallel calls
+are simple and efficient, for instance by using python's `multiprocessing`
+library. For instance, the following example calculates the free energy
+of a set of sequences over a range of temperatures.
+
+```python
+import nupyck
+from multiprocessing import Pool
+
+sequences = [
+    "AGTCTAGGATTCGGCGTGGGTTAA",
+    "TTAACCCACGCCGAATCCTAGACTCAAAGTAGTCTAGGATTCGGCGTG",
+    "AGTCTAGGATTCGGCGTGGGTTAACACGCCGAATCCTAGACTACTTTG"
+]
+
+permutation = [1, 2, 2, 3]
+
+options = nupyck.Options(material = nupyck.DNA)
+
+temperatures = range(20, 60)
+
+def worker(temp):
+    result = nupyck.pfunc(sequences, permutation, temp=temp, options=options)
+    return result['energy']
+
+# run in parallel on all available CPUs
+pool = Pool()
+results = pool.map(worker, temperatures)
+pool.close()
+```
