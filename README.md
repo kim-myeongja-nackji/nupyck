@@ -167,8 +167,23 @@ This outputs (line breaks added for clarity):
 ]
 7.66711549256424e-07
 ```
+**Note**: `nupyck.concentrations` does not currently produce the `fpairs`
+output of NUPACK's concentrations, nor any of the other outputs of `complexes`.
+These features may be added in a later version.
+
 
 #### `mfe`
+The input to `nupyck.mfe` is the same as to `nupyck.pfunc`. As with NUPACK's
+`mfe` application, the output is a list of possible minimum free energy
+structures. Each entry in the list is a dictionary with entires for `energy`
+and `structure` (in dot-paren notation). For example:
+```python
+print nupyck.mfe(["GAUCCGC", "GCGAAUC"], [1,2])
+```
+Produces:
+```python
+[{'energy': -6.1813514190794585, 'structure': '(((.(((+))).)))'}]
+```
 
 ### Advanced Usage
 
