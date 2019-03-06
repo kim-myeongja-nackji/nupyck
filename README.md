@@ -100,6 +100,73 @@ of NUPACK, nor does it implement pair calculation with pseudoknots. These
 features may be implemented in a later version of `nupyck`.
 
 #### `concentrations`
+Whereas NUPACK's `concentrations` app requires you to run `complexes` first,
+`nupyck.concentrations` simply takes as input a list of sequences, a vector
+of initial concentrations for each of them, and a maximum complex size. It then
+returns the final concentrations of all possible species up to that size.
+
+The result is a python dictionary with entries for `concentrations`
+and `energies`. Each of these is a dictionary indexed by the permutation of the
+ordered complex. For example, with `sequences` and `options` defined as in
+previous examples:
+
+```python
+result = nupyck.concentrations(
+    sequences,
+    x0 = [1e-6, 1e-6, 1e-6],
+    max_complex_size = 3,
+    temp = 23,
+    options = options
+)
+print sorted(result['concentrations'].keys())
+print result['concentrations'][1,2,3]
+```
+This outputs (line breaks added for clarity):
+```python
+[ (1,),
+  (1, 1), (1, 1, 1), (1, 1, 2), (1, 1, 3),
+  (1, 2), (1, 2, 2), (1, 2, 3),
+  (1, 3), (1, 3, 3),
+  (2,),
+  (2, 2), (2, 2, 2), (2, 2, 3),
+  (2, 3), (2, 3, 3),
+  (3,),
+  (3, 3), (3, 3, 3)
+]
+7.66711549256424e-07
+```
+
+String names can also be assigned to each sequence. This will cause the
+complexes to be indexed by the name of each sequence in the complex,
+joined with "-".
+For example:
+```python
+result = nupyck.concentrations(
+    sequences,
+    names = ["A", "B", "C"],
+    x0 = [1e-6, 1e-6, 1e-6],
+    max_complex_size = 3,
+    temp = 23,
+    options = options
+)
+print sorted(result['concentrations'].keys())
+print result['concentrations']["A-B-C"]
+```
+This outputs (line breaks added for clarity):
+```python
+[ 'A',
+  'A-A', 'A-A-A', 'A-A-B', 'A-A-C',
+  'A-B', 'A-B-B', 'A-B-C',
+  'A-C', 'A-C-C',
+  'B',
+  'B-B', 'B-B-B', 'B-B-C',
+  'B-C', 'B-C-C',
+  'C',
+  'C-C',
+  'C-C-C'
+]
+7.66711549256424e-07
+```
 
 #### `mfe`
 
