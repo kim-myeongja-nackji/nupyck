@@ -15,6 +15,36 @@ def _convert_perms_to_A(perms):
 
     return A
 
+
+# adapted from nupack/src/thermo/complexes/permBG.c
+def makePermutations(length, nStrands):
+    permutations = []
+    current_code = [0] * (length + 1)
+
+    permutations.append(tuple(current_code[c + 1] + 1 for c in range(length)))
+
+    i = length
+    test = nStrands > 1
+    while test:
+        current_code[i] = current_code[i] + 1
+
+        for j in range(1, length - i + 1):
+            current_code[i + j] = current_code[j]
+
+        if length % i == 0:
+            permutations.append(
+                tuple(current_code[c + 1] + 1 for c in range(length))
+            )
+
+        i = length
+        while current_code[i] == nStrands - 1:
+            i = i - 1
+
+        test = i != 0
+
+    return permutations
+
+
 def concentrations(
         species,
         x0,
@@ -23,11 +53,11 @@ def concentrations(
         names=None,
         options=core.Options()):
 
-    perms = itertools.chain(
-        *[itertools.combinations_with_replacement(range(1,len(species)+1), n)
-            for n in range(1, max_complex_size+1)
-            ]
-        )
+    perms = itertools.chain(*[
+        makePermutations(length, len(species))
+        for length in range(1, max_complex_size + 1)
+    ])
+
     perms = list(perms)
 
     G = np.array(
